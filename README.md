@@ -39,7 +39,7 @@ To replicate or contribute to this project, you will need:
 ### Setup
 1. Clone this repository:
    ```bash
-   git clone [repository_url]
+   git clone [https://github.com/SzymonParol/Thermo-brew-control.git]
    ```
 2. Connect the hardware components as follows:
    - DS18B20: GPIO pin configured for 1-Wire communication
@@ -64,4 +64,4 @@ Contributions are welcome! Feel free to fork this repository, make changes, and 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Contact
-For any questions or suggestions, please feel free to reach out via [email/contact info].
+For any questions or suggestions, please feel free to reach out via [szymon.parol@outlook.com].
