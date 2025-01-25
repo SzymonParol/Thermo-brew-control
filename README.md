@@ -57,11 +57,8 @@ Once the hardware is set up and firmware is flashed:
 - **Encoder and Button:** For intuitive manual controls.
 - **Mobile App Integration:** Using ESP8266 for remote monitoring and adjustments.
 
-## Contribution
-Contributions are welcome! Feel free to fork this repository, make changes, and submit a pull request.
-
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Contact
-For any questions or suggestions, please feel free to reach out via [szymon.parol@outlook.com].
+For any questions or suggestions, please feel free to reach out via szymon.parol@outlook.com.
