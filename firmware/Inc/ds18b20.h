@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stm32f0xx.h"
+#include "stm32f4xx.h"
 
 #define DS18B20_ROM_CODE_SIZE		8
 

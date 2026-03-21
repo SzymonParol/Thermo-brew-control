@@ -7,7 +7,7 @@
 
 #include "gpio.h"
 #include "a4988.h"
-#include "stm32f0xx.h"
+#include "stm32f4xx.h"
 
 void move_step(int count_steps, int del)
 {
