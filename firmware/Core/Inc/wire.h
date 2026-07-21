@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stm32f0xx_hal.h"
+#include "stm32f4xx_hal.h"
 
 // Inicjalizacja 1-wire
 // Start licznika używanego do opóźnień
