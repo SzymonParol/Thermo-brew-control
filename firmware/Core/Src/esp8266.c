@@ -147,6 +147,27 @@ ESP8266_Result_t ESP8266_SendData(ESP8266_Handle_t *hesp, const char *data) {
     return ESP8266_OK;
 }
 
+ESP8266_Result_t ESP8266_ScanNetworks(
+    ESP8266_Handle_t *hesp
+)
+{
+    if (!hesp || !hesp->initialized)
+    {
+        return ESP8266_ERROR;
+    }
+
+    ESP8266_SendDebugMessage(
+        hesp,
+        "WIFI",
+        "Skanowanie sieci..."
+    );
+
+    return ESP8266_SendCommand(
+        hesp,
+        "AT+CWLAP"
+    );
+}
+
 void ESP8266_SendDebugMessage(ESP8266_Handle_t *hesp, const char *prefix, const char *message) {
     if (!hesp || !prefix || !message) {
         return;

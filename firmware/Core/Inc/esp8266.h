@@ -48,6 +48,7 @@ ESP8266_Result_t ESP8266_GetIP(ESP8266_Handle_t *hesp, char *ip_buffer);
 ESP8266_Result_t ESP8266_StartServer(ESP8266_Handle_t *hesp, uint16_t port);
 ESP8266_Result_t ESP8266_SendCommand(ESP8266_Handle_t *hesp, const char *cmd);
 ESP8266_Result_t ESP8266_SendData(ESP8266_Handle_t *hesp, const char *data);
+ESP8266_Result_t ESP8266_ScanNetworks(ESP8266_Handle_t *hesp);
 
 /* Funkcje callback - do implementacji przez użytkownika */
 void ESP8266_DataReceived_Callback(ESP8266_Handle_t *hesp, const char *data);

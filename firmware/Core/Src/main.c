@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -31,6 +32,7 @@
 #include <string.h>
 #include "wire.h"
 #include "a4988.h"
+#include "esp8266.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,7 +53,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+ESP8266_Handle_t esp8266;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,10 +101,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_TIM6_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   uint8_t rom[8];
   float temp;
@@ -113,7 +117,33 @@ int main(void)
   lcd_cursor_set(1, 1);
   lcd_send_string("HELLO WORLD");
 
-//  ds18b20_init();
+  ESP8266_Result_t esp_result;
+
+  esp_result = ESP8266_Init(
+      &esp8266,
+      &huart1,
+      &huart2
+  );
+
+  if (esp_result == ESP8266_OK)
+  {
+      printf("ESP8266: inicjalizacja OK\r\n");
+  }
+  else
+  {
+      printf("ESP8266: inicjalizacja ERROR\r\n");
+  }
+
+  HAL_Delay(2000);
+
+  ESP8266_SendCommand(
+      &esp8266,
+      "AT+CWMODE=1"
+  );
+
+  HAL_Delay(1000);
+
+  ESP8266_ScanNetworks(&esp8266);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,8 +151,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-//	  float temp = ds18b20_get_temp(NULL);
-//	  printf("Temp: %.2f C\r\n", temp);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
