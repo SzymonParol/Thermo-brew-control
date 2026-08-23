@@ -1,7 +1,7 @@
 #include <string.h>
 #include "ds18b20.h"
 #include "wire.h"
-#include "gpio.h"
+
 #define DS18B20_SCRATCHPAD_SIZE    9
 
 #define DS18B20_READ_ROM           0x33
@@ -13,7 +13,7 @@
 
 HAL_StatusTypeDef ds18b20_init(void)
 {
-  return wire_init();
+    return wire_init();
 }
 
 HAL_StatusTypeDef ds18b20_read_address(uint8_t* rom_code)

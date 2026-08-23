@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
-#include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -28,11 +28,12 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "ds18b20.h"
-#include "i2c-lcd.h"
+//#include "i2c-lcd.h"
 #include <string.h>
 #include "wire.h"
 #include "a4988.h"
 #include "esp8266.h"
+#include "ili9341.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,6 +55,13 @@
 
 /* USER CODE BEGIN PV */
 ESP8266_Handle_t esp8266;
+
+volatile uint8_t enter_button_pressed = 0;
+volatile uint32_t enter_button_last_tick = 0;
+
+int16_t encoder_previous = 0;
+int16_t encoder_current = 0;
+int16_t encoder_delta = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,9 +72,23 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//int _write(int file, char *ptr, int len)
+//{
+//    HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+//    return len;
+//}
+
 int _write(int file, char *ptr, int len)
 {
-    HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+    (void)file;
+
+    HAL_UART_Transmit(
+        &huart2,
+        (uint8_t *)ptr,
+        len,
+        100
+    );
+
     return len;
 }
 
@@ -103,54 +125,142 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
-  MX_I2C1_Init();
   MX_TIM1_Init();
   MX_TIM6_Init();
   MX_USART1_UART_Init();
+  MX_TIM3_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
+
+  HAL_TIM_Base_Start(&htim1);
   uint8_t rom[8];
   float temp;
   char line[20];
 
-  lcd_init();
 
-  lcd_cursor_set(1, 1);
-  lcd_send_string("HELLO WORLD");
+//  ESP8266_Result_t esp_result;
+//
+//  esp_result = ESP8266_Init(
+//      &esp8266,
+//      &huart1,
+//      &huart2
+//  );
+//
+//  if (esp_result == ESP8266_OK)
+//  {
+//      printf("ESP8266: inicjalizacja OK\r\n");
+//  }
+//  else
+//  {
+//      printf("ESP8266: inicjalizacja ERROR\r\n");
+//  }
+//
+//  HAL_Delay(2000);
+//
+//  ESP8266_SendCommand(
+//      &esp8266,
+//      "AT+CWMODE=1"
+//  );
+//
+//  HAL_Delay(1000);
+//
+//  ESP8266_ScanNetworks(&esp8266);
 
-  ESP8266_Result_t esp_result;
+//  uint32_t encoder_last_print_time = 0;
+//  int16_t encoder_last_printed = 0;
+//
+//  HAL_TIM_Encoder_Start(
+//      &htim3,
+//      TIM_CHANNEL_ALL
+//  );
+//
+//  encoder_previous =
+//      (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+//
+//  printf("Test enkodera uruchomiony\r\n");
 
-  esp_result = ESP8266_Init(
-      &esp8266,
-      &huart1,
-      &huart2
-  );
+//  ILI9341_Init();
+//
+//  ILI9341_FillScreen(
+//      ILI9341_RED
+//  );
+//
+//  HAL_Delay(1000);
+//
+//  ILI9341_FillScreen(
+//      ILI9341_GREEN
+//  );
+//
+//  HAL_Delay(1000);
+//
+//  ILI9341_FillScreen(
+//      ILI9341_BLUE
+//  );
 
-  if (esp_result == ESP8266_OK)
-  {
-      printf("ESP8266: inicjalizacja OK\r\n");
+  if (ds18b20_init() != HAL_OK) {
+    Error_Handler();
   }
-  else
-  {
-      printf("ESP8266: inicjalizacja ERROR\r\n");
+
+  uint8_t ds1[DS18B20_ROM_CODE_SIZE];
+
+  if (ds18b20_read_address(ds1) != HAL_OK) {
+    Error_Handler();
   }
-
-  HAL_Delay(2000);
-
-  ESP8266_SendCommand(
-      &esp8266,
-      "AT+CWMODE=1"
-  );
-
-  HAL_Delay(1000);
-
-  ESP8266_ScanNetworks(&esp8266);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	    ds18b20_start_measure(NULL);
+	    HAL_Delay(750);
+	    float temp = ds18b20_get_temp(NULL);
+	    if (temp >= 80.0f)
+	      printf("Sensor error...\n");
+	    else
+	      printf("T1 = %.1f*C\n", temp);
+
+
+//	  uint32_t now = HAL_GetTick();
+//
+//	      encoder_current =
+//	          (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+//
+//	      encoder_delta =
+//	          encoder_current - encoder_previous;
+//
+//	      if (encoder_delta != 0)
+//	      {
+//	          encoder_previous = encoder_current;
+//	      }
+//
+//	      if ((now - encoder_last_print_time) >= 100)
+//	      {
+//	          if (encoder_current != encoder_last_printed)
+//	          {
+//	              printf(
+//	                  "CNT = %d\r\n",
+//	                  encoder_current
+//	              );
+//
+//	              encoder_last_printed =
+//	                  encoder_current;
+//	          }
+//
+//	          encoder_last_print_time = now;
+//	      }
+//
+//
+//	      if (enter_button_pressed)
+//	      {
+//	          enter_button_pressed = 0;
+//
+//	          printf("ENTER - przycisk wcisniety\r\n");
+//	      }
+//
+//	      HAL_Delay(1);
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -203,7 +313,19 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == ENTER_button_Pin)
+    {
+        uint32_t now = HAL_GetTick();
 
+        if ((now - enter_button_last_tick) > 50)
+        {
+            enter_button_pressed = 1;
+            enter_button_last_tick = now;
+        }
+    }
+}
 /* USER CODE END 4 */
 
 /**
