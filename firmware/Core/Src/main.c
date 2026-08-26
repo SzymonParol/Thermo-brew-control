@@ -28,12 +28,12 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "ds18b20.h"
-//#include "i2c-lcd.h"
 #include <string.h>
 #include "wire.h"
 #include "a4988.h"
 #include "esp8266.h"
 #include "ili9341.h"
+#include "max6675.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -130,6 +130,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   MX_SPI3_Init();
+  MX_SPI2_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start(&htim1);
