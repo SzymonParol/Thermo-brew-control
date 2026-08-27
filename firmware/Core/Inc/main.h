@@ -68,6 +68,8 @@ void Error_Handler(void);
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
+#define SDCard_SCK_Pin GPIO_PIN_5
+#define SDCard_SCK_GPIO_Port GPIOA
 #define DIR_Pin GPIO_PIN_6
 #define DIR_GPIO_Port GPIOC
 #define STEP_Pin GPIO_PIN_8
@@ -85,6 +87,10 @@ void Error_Handler(void);
 #define LCD_DC_GPIO_Port GPIOD
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
+#define SDCard_MISO_Pin GPIO_PIN_4
+#define SDCard_MISO_GPIO_Port GPIOB
+#define SDCard_MOSI_Pin GPIO_PIN_5
+#define SDCard_MOSI_GPIO_Port GPIOB
 #define LCD_CS_Pin GPIO_PIN_7
 #define LCD_CS_GPIO_Port GPIOB
 
