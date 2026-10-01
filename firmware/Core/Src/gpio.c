@@ -72,6 +72,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : ESC_button_Pin */
+  GPIO_InitStruct.Pin = ESC_button_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(ESC_button_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : MAX6675_CS_Pin */
   GPIO_InitStruct.Pin = MAX6675_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -95,7 +101,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : ENTER_button_Pin */
   GPIO_InitStruct.Pin = ENTER_button_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(ENTER_button_GPIO_Port, &GPIO_InitStruct);
 

@@ -1,13 +1,12 @@
-/*
- * a4988.h
- *
- *  Created on: 2 lip 2023
- *      Author: Szym
- */
-#include "stm32f4xx.h"
-#include "gpio.h"
+#ifndef A4988_H_
+#define A4988_H_
 
-void move_step(int count_steps, int del);
+#include "main.h"
 
+void A4988_Init(void);
+void A4988_SetSpeed(float pct);
+void A4988_SetDirection(uint8_t cw);
+void A4988_Stop(void);
+void A4988_Update(void);
 
-
+#endif

@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "fatfs.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -34,6 +35,7 @@
 #include "esp8266.h"
 #include "ili9341.h"
 #include "max6675.h"
+#include "system.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,13 +57,6 @@
 
 /* USER CODE BEGIN PV */
 ESP8266_Handle_t esp8266;
-
-volatile uint8_t enter_button_pressed = 0;
-volatile uint32_t enter_button_last_tick = 0;
-
-int16_t encoder_previous = 0;
-int16_t encoder_current = 0;
-int16_t encoder_delta = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,135 +127,24 @@ int main(void)
   MX_SPI3_Init();
   MX_SPI2_Init();
   MX_SPI1_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start(&htim1);
-  uint8_t rom[8];
-  float temp;
-  char line[20];
 
+  System_Init();
 
-//  ESP8266_Result_t esp_result;
-//
-//  esp_result = ESP8266_Init(
-//      &esp8266,
-//      &huart1,
-//      &huart2
-//  );
-//
-//  if (esp_result == ESP8266_OK)
-//  {
-//      printf("ESP8266: inicjalizacja OK\r\n");
-//  }
-//  else
-//  {
-//      printf("ESP8266: inicjalizacja ERROR\r\n");
-//  }
-//
-//  HAL_Delay(2000);
-//
-//  ESP8266_SendCommand(
-//      &esp8266,
-//      "AT+CWMODE=1"
-//  );
-//
-//  HAL_Delay(1000);
-//
-//  ESP8266_ScanNetworks(&esp8266);
-
-//  uint32_t encoder_last_print_time = 0;
-//  int16_t encoder_last_printed = 0;
-//
-//  HAL_TIM_Encoder_Start(
-//      &htim3,
-//      TIM_CHANNEL_ALL
-//  );
-//
-//  encoder_previous =
-//      (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
-//
-//  printf("Test enkodera uruchomiony\r\n");
-
-//  ILI9341_Init();
-//
-//  ILI9341_FillScreen(
-//      ILI9341_RED
-//  );
-//
-//  HAL_Delay(1000);
-//
-//  ILI9341_FillScreen(
-//      ILI9341_GREEN
-//  );
-//
-//  HAL_Delay(1000);
-//
-//  ILI9341_FillScreen(
-//      ILI9341_BLUE
-//  );
-
-  if (ds18b20_init() != HAL_OK) {
-    Error_Handler();
-  }
-
-  uint8_t ds1[DS18B20_ROM_CODE_SIZE];
-
-  if (ds18b20_read_address(ds1) != HAL_OK) {
-    Error_Handler();
-  }
+  uint32_t test_counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	    ds18b20_start_measure(NULL);
-	    HAL_Delay(750);
-	    float temp = ds18b20_get_temp(NULL);
-	    if (temp >= 80.0f)
-	      printf("Sensor error...\n");
-	    else
-	      printf("T1 = %.1f*C\n", temp);
+	  System_Update();
+	  System_Draw();
 
-
-//	  uint32_t now = HAL_GetTick();
-//
-//	      encoder_current =
-//	          (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
-//
-//	      encoder_delta =
-//	          encoder_current - encoder_previous;
-//
-//	      if (encoder_delta != 0)
-//	      {
-//	          encoder_previous = encoder_current;
-//	      }
-//
-//	      if ((now - encoder_last_print_time) >= 100)
-//	      {
-//	          if (encoder_current != encoder_last_printed)
-//	          {
-//	              printf(
-//	                  "CNT = %d\r\n",
-//	                  encoder_current
-//	              );
-//
-//	              encoder_last_printed =
-//	                  encoder_current;
-//	          }
-//
-//	          encoder_last_print_time = now;
-//	      }
-//
-//
-//	      if (enter_button_pressed)
-//	      {
-//	          enter_button_pressed = 0;
-//
-//	          printf("ENTER - przycisk wcisniety\r\n");
-//	      }
-//
-//	      HAL_Delay(1);
+	  HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -315,19 +199,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == ENTER_button_Pin)
-    {
-        uint32_t now = HAL_GetTick();
-
-        if ((now - enter_button_last_tick) > 50)
-        {
-            enter_button_pressed = 1;
-            enter_button_last_tick = now;
-        }
-    }
-}
 /* USER CODE END 4 */
 
 /**

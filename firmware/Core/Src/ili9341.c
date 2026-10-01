@@ -1,5 +1,6 @@
 #include "ili9341.h"
 #include "spi.h"
+#include "font5x7.h"
 
 #define ILI9341_SWRESET  0x01
 #define ILI9341_SLPOUT   0x11
@@ -264,4 +265,155 @@ void ILI9341_FillScreen(
     }
 
     LCD_Unselect();
+}
+
+void ILI9341_FillRect(
+    uint16_t x,
+    uint16_t y,
+    uint16_t width,
+    uint16_t height,
+    uint16_t color
+)
+{
+    uint16_t row;
+    uint16_t column;
+
+    for (row = 0U; row < height; row++)
+    {
+        for (column = 0U; column < width; column++)
+        {
+            ILI9341_DrawPixel((uint16_t)(x + column),
+                              (uint16_t)(y + row),
+                              color);
+        }
+    }
+}
+
+void ILI9341_DrawChar(
+    uint16_t x,
+    uint16_t y,
+    char character,
+    uint16_t text_color,
+    uint16_t background_color,
+    uint8_t scale
+)
+{
+    uint8_t column;
+    uint8_t row;
+    uint8_t bit;
+    uint8_t glyph_index;
+    uint8_t glyph_column;
+    uint16_t pixel_x;
+    uint16_t pixel_y;
+    uint16_t pixel_color;
+
+    if (character < 0x20 || character > 0x7F)
+    {
+        character = '?';
+    }
+
+    if (scale == 0U)
+    {
+        scale = 1U;
+    }
+
+    glyph_index = (uint8_t)character - 0x20U;
+
+    for (column = 0U; column < FONT5X7_WIDTH; column++)
+    {
+        glyph_column = Font5x7[glyph_index][column];
+
+        for (row = 0U; row < FONT5X7_HEIGHT; row++)
+        {
+            bit = (uint8_t)((glyph_column >> row) & 0x01U);
+
+            if (bit != 0U)
+            {
+                pixel_color = text_color;
+            }
+            else
+            {
+                pixel_color = background_color;
+            }
+
+            if (scale == 1U)
+            {
+                ILI9341_DrawPixel((uint16_t)(x + column),
+                                  (uint16_t)(y + row),
+                                  pixel_color);
+            }
+            else
+            {
+                for (pixel_y = 0U; pixel_y < scale; pixel_y++)
+                {
+                    for (pixel_x = 0U; pixel_x < scale; pixel_x++)
+                    {
+                        ILI9341_DrawPixel(
+                            (uint16_t)(x + (column * scale) + pixel_x),
+                            (uint16_t)(y + (row * scale) + pixel_y),
+                            pixel_color
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Szósta, pusta kolumna pomiędzy znakami.
+     * Dzięki temu napisy nie zlewają się ze sobą.
+     */
+    for (row = 0U; row < FONT5X7_HEIGHT; row++)
+    {
+        for (pixel_x = 0U; pixel_x < scale; pixel_x++)
+        {
+            for (pixel_y = 0U; pixel_y < scale; pixel_y++)
+            {
+                ILI9341_DrawPixel(
+                    (uint16_t)(x + (FONT5X7_WIDTH * scale) + pixel_x),
+                    (uint16_t)(y + (row * scale) + pixel_y),
+                    background_color
+                );
+            }
+        }
+    }
+}
+
+void ILI9341_DrawString(
+    uint16_t x,
+    uint16_t y,
+    const char *text,
+    uint16_t text_color,
+    uint16_t background_color,
+    uint8_t scale
+)
+{
+    uint16_t cursor_x;
+
+    if (text == NULL)
+    {
+        return;
+    }
+
+    if (scale == 0U)
+    {
+        scale = 1U;
+    }
+
+    cursor_x = x;
+
+    while (*text != '\0')
+    {
+        ILI9341_DrawChar(
+            cursor_x,
+            y,
+            *text,
+            text_color,
+            background_color,
+            scale
+        );
+
+        cursor_x = (uint16_t)(cursor_x + ((FONT5X7_WIDTH + 1U) * scale));
+        text++;
+    }
 }

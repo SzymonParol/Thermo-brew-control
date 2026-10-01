@@ -31,4 +31,30 @@ void ILI9341_SetRotation(
     uint8_t rotation
 );
 
+void ILI9341_FillRect(
+    uint16_t x,
+    uint16_t y,
+    uint16_t width,
+    uint16_t height,
+    uint16_t color
+);
+
+void ILI9341_DrawChar(
+    uint16_t x,
+    uint16_t y,
+    char character,
+    uint16_t text_color,
+    uint16_t background_color,
+    uint8_t scale
+);
+
+void ILI9341_DrawString(
+    uint16_t x,
+    uint16_t y,
+    const char *text,
+    uint16_t text_color,
+    uint16_t background_color,
+    uint8_t scale
+);
+
 #endif

@@ -60,6 +60,8 @@ void Error_Handler(void);
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define B1_EXTI_IRQn EXTI15_10_IRQn
+#define ESC_button_Pin GPIO_PIN_0
+#define ESC_button_GPIO_Port GPIOC
 #define MAX6675_CS_Pin GPIO_PIN_3
 #define MAX6675_CS_GPIO_Port GPIOC
 #define DS_Pin GPIO_PIN_1
