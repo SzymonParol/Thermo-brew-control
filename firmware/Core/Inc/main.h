@@ -53,7 +53,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+extern SPI_HandleTypeDef hspi1;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -79,6 +79,8 @@ void Error_Handler(void);
 #define ENTER_button_Pin GPIO_PIN_11
 #define ENTER_button_GPIO_Port GPIOA
 #define ENTER_button_EXTI_IRQn EXTI15_10_IRQn
+#define SDCard_CS_Pin GPIO_PIN_12
+#define SDCard_CS_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14

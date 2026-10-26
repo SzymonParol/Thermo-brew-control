@@ -1,12 +1,12 @@
 #ifndef INPUTS_H_
 #define INPUTS_H_
 
-#include "main.h"
+#include <stdint.h>
 
-extern uint8_t enc_btn_pressed;
-extern uint8_t esc_btn_pressed;
+extern volatile uint8_t enc_btn_pressed;
+extern volatile uint8_t esc_btn_pressed;
 extern int16_t enc_delta;
 
 void System_HandleInputs(void);
 
-#endif
+#endif /* INPUTS_H_ */

@@ -36,6 +36,11 @@
 #include "ili9341.h"
 #include "max6675.h"
 #include "system.h"
+#include "ui.h"
+#include "config.h"
+
+#include "ff.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -141,10 +146,50 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  System_Update();
-	  System_Draw();
+	  FATFS fs;
+	      FIL file;
+	      FRESULT result;
+	      UINT written = 0U;
+	      char text[] = "TEST\r\n";
+	      static uint8_t test_result = 2U;
 
-	  HAL_Delay(500);
+	      if (test_result == 2U)
+	      {
+	          result = f_mount(&fs, "0:/", 1U);
+
+	          if (result == FR_OK)
+	          {
+	              result = f_open(&file, "0:/TEST.TXT", FA_CREATE_ALWAYS | FA_WRITE);
+
+	              if (result == FR_OK)
+	              {
+	                  f_write(&file, text, strlen(text), &written);
+	                  f_close(&file);
+	                  test_result = 1U;
+	              }
+	              else
+	              {
+	                  test_result = 0U;
+	              }
+	          }
+	          else
+	          {
+	              test_result = 0U;
+	          }
+	      }
+
+	      if (test_result == 1U)
+	      {
+	          ILI9341_FillRect(0U, 60U, ILI9341_WIDTH, 20U, ILI9341_GREEN);
+	          ILI9341_DrawString(0U, 62U, "KARTA OK", ILI9341_WHITE, ILI9341_GREEN, 2U);
+	      }
+	      else
+	      {
+	          ILI9341_FillRect(0U, 60U, ILI9341_WIDTH, 20U, ILI9341_RED);
+	          ILI9341_DrawString(0U, 62U, "KARTA BLAD", ILI9341_WHITE, ILI9341_RED, 2U);
+	      }
+
+	      HAL_Delay(1000U);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
